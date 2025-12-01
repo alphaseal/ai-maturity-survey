@@ -33,14 +33,20 @@ const AISurvey = () => {
           required: true
         },
         {
+          id: 'industry',
+          text: '1. Which industry best describes your organisation?',
+          type: 'select',
+          options: ['Technology / Software', 'Financial Services', 'Real Estate', 'Healthcare', 'Education', 'Government / Public Sector', 'Retail / E-commerce', 'Manufacturing', 'Professional Services', 'Media / Creative', 'Other']
+        },
+        {
           id: 'department',
-          text: '1. Which department best describes your primary function?',
+          text: '2. Which department best describes your primary function?',
           type: 'select',
           options: ['Sales', 'Marketing', 'Customer Services', 'Strategy', 'Engineering / IT', 'HR', 'Finance', 'Operations', 'Legal', 'Other']
         },
         {
           id: 'roleLevel',
-          text: '2. What is your current role level?',
+          text: '3. What is your current role level?',
           type: 'radio',
           options: [
             { value: 'ic', label: 'Individual Contributor / Specialist' },
@@ -52,7 +58,7 @@ const AISurvey = () => {
         },
         {
           id: 'tenure',
-          text: '3. How long have you been with the organization?',
+          text: '4. How long have you been with the organization?',
           type: 'radio',
           options: [
             { value: '<1', label: 'Less than 1 year' },
@@ -63,14 +69,14 @@ const AISurvey = () => {
         },
         {
           id: 'revenue',
-          text: '4. (Leadership Only) What is the organization\'s approximate annual revenue/turnover range?',
+          text: '5. (Leadership Only) What is the organization\'s approximate annual revenue/turnover range?',
           type: 'select',
           options: ['<$1M', '$1M-$10M', '$10M-$50M', '>$50M'],
           conditional: true
         },
         {
           id: 'headcount',
-          text: '5. (Leadership Only) What is the current total headcount of the organization?',
+          text: '6. (Leadership Only) What is the current total headcount of the organization?',
           type: 'select',
           options: ['1–10', '10–25', '25–50', '50–100', '100–200', '200+'],
           conditional: true
@@ -82,7 +88,7 @@ const AISurvey = () => {
       questions: [
         {
           id: 'frequency',
-          text: '6. How frequently do you currently use Generative AI tools (like ChatGPT, Claude, Copilot) to assist with work tasks?',
+          text: '7. How frequently do you currently use Generative AI tools (like ChatGPT, Claude, Copilot) to assist with work tasks?',
           type: 'radio',
           options: [
             { value: 'daily-multiple', label: 'Daily - Multiple times a day' },
@@ -93,8 +99,19 @@ const AISurvey = () => {
           ]
         },
         {
+          id: 'training',
+          text: '8. What level of formal AI training have you received from the organization?',
+          type: 'radio',
+          options: [
+            { value: 'none', label: 'None - I am completely self-taught' },
+            { value: 'basic', label: 'Basic - Access to guidelines or a one-off intro session' },
+            { value: 'structured', label: 'Structured - Regular workshops, prompting courses, or certification' },
+            { value: 'advanced', label: 'Advanced - Deep technical training or "AI Champion" program' }
+          ]
+        },
+        {
           id: 'tools',
-          text: '7. Which of the following AI tools have you used for work purposes in the last 30 days? (Select all that apply)',
+          text: '9. Which of the following AI tools have you used for work purposes in the last 30 days? (Select all that apply)',
           type: 'checkbox',
           options: [
             'OpenAI (ChatGPT)',
@@ -122,7 +139,7 @@ const AISurvey = () => {
         },
         {
           id: 'proficiency',
-          text: '8. How would you rate your own proficiency in using AI tools effectively?',
+          text: '10. How would you rate your own proficiency in using AI tools effectively?',
           type: 'radio',
           options: [
             { value: '1', label: '1 - Novice (I am just starting to explore)' },
@@ -133,7 +150,7 @@ const AISurvey = () => {
         },
         {
           id: 'personalUse',
-          text: '9. To get your job done efficiently, are there AI tools you sometimes use on personal devices or accounts because the company doesn\'t currently provide access to them?',
+          text: '11. To get your job done efficiently, are there AI tools you sometimes use on personal devices or accounts because the company doesn\'t currently provide access to them?',
           type: 'radio',
           options: [
             { value: 'frequently', label: 'Yes, frequently' },
@@ -144,11 +161,11 @@ const AISurvey = () => {
       ]
     },
     {
-      title: "Workflow Integration",
+      title: "Workflow Integration & Barriers",
       questions: [
         {
           id: 'integration',
-          text: '10. How integrated is AI into your current workflow?',
+          text: '12. How integrated is AI into your current workflow?',
           type: 'radio',
           options: [
             { value: 'none', label: 'Not integrated (I don\'t use it)' },
@@ -158,10 +175,35 @@ const AISurvey = () => {
           ]
         },
         {
-          id: 'value',
-          text: '11. Based on your experience, where does AI currently add the most value to your work? (Select up to two)',
+          id: 'barriers',
+          text: '13. What are the BIGGEST barriers preventing you from using AI more effectively at work? (Select up to three)',
           type: 'checkbox',
-          maxSelections: 2,
+          maxSelections: 3,
+          options: [
+            'Lack of access to the right tools (Budget/IT blocking)',
+            'Lack of training / Don\'t know how to use it effectively',
+            'Data privacy & security concerns',
+            'Unclear company policy (Not sure what is allowed)',
+            'Fear of output accuracy / hallucinations',
+            'No clear use case for my specific role',
+            'None - I face no significant barriers'
+          ]
+        },
+        {
+          id: 'collaboration',
+          text: '14. Do you share AI prompts, custom instructions, or "bots" with your colleagues?',
+          type: 'radio',
+          options: [
+            { value: 'never', label: 'No, I work in isolation' },
+            { value: 'informally', label: 'Yes, occasionally/informally (e.g., via chat)' },
+            { value: 'library', label: 'Yes, we have a shared prompt library or team workspace' }
+          ]
+        },
+        {
+          id: 'value',
+          text: '15. Based on your experience, where does AI currently add the most value to your work? (Select up to three)',
+          type: 'checkbox',
+          maxSelections: 3,
           options: [
             'Speeding up repetitive tasks (efficiency)',
             'Improving the quality/accuracy of my output',
@@ -173,7 +215,7 @@ const AISurvey = () => {
         },
         {
           id: 'taskWish',
-          text: '12. Describe one manual, repetitive, or time-consuming task you perform regularly that you wish an AI tool could handle or simplify for you.',
+          text: '16. Describe one manual, repetitive, or time-consuming task you perform regularly that you wish an AI tool could handle or simplify for you.',
           type: 'textarea'
         }
       ]
@@ -184,22 +226,22 @@ const AISurvey = () => {
       questions: [
         {
           id: 'visionClarity',
-          text: '13. "I clearly understand the organization\'s vision and strategy for adopting Artificial Intelligence."',
+          text: '17. "I clearly understand the organization\'s vision and strategy for adopting Artificial Intelligence."',
           type: 'likert'
         },
         {
           id: 'leadershipUnderstanding',
-          text: '14. "I feel leadership understands the practical realities and challenges of using AI in my specific job role."',
+          text: '18. "I feel leadership understands the practical realities and challenges of using AI in my specific job role."',
           type: 'likert'
         },
         {
           id: 'resources',
-          text: '15. "I feel I have the necessary time and resources (training, budget) to learn and adopt new AI tools."',
+          text: '19. "I feel I have the necessary time and resources (training, budget) to learn and adopt new AI tools."',
           type: 'likert'
         },
         {
           id: 'culture',
-          text: '16. "The culture in my department is generally open to adopting new technologies and changing how we work."',
+          text: '20. "The culture in my department is generally open to adopting new technologies and changing how we work."',
           type: 'likert'
         }
       ]
@@ -209,7 +251,7 @@ const AISurvey = () => {
       questions: [
         {
           id: 'policyAwareness',
-          text: '17. Are you aware of an official organization-wide "AI Acceptable Use Policy" or set of guidelines?',
+          text: '21. Are you aware of an official organization-wide "AI Acceptable Use Policy" or set of guidelines?',
           type: 'radio',
           options: [
             { value: 'read', label: 'Yes, I have read it.' },
@@ -220,7 +262,7 @@ const AISurvey = () => {
         },
         {
           id: 'dataConfidence',
-          text: '18. How confident are you that you know what types of company data are safe to share with public AI models (like ChatGPT) versus what must be kept private?',
+          text: '22. How confident are you that you know what types of company data are safe to share with public AI models (like ChatGPT) versus what must be kept private?',
           type: 'radio',
           options: [
             { value: '1', label: '1 - Not confident at all (I am confused about what is allowed)' },
@@ -232,7 +274,7 @@ const AISurvey = () => {
         },
         {
           id: 'ethicalSupport',
-          text: '19. "When I use AI, I feel supported by the organization to make ethical decisions about how its output is used (e.g., checking for bias, ensuring accuracy)."',
+          text: '23. "When I use AI, I feel supported by the organization to make ethical decisions about how its output is used (e.g., checking for bias, ensuring accuracy)."',
           type: 'likert'
         }
       ]
@@ -323,7 +365,6 @@ const AISurvey = () => {
       
       console.log('Data sent to Google Sheets');
       
-      // Reduced delay from 1500ms to 500ms for faster feel
       setTimeout(() => {
         setSubmitted(true);
         setSubmitting(false);
@@ -332,7 +373,6 @@ const AISurvey = () => {
       
     } catch (err) {
       console.error('Submission error:', err);
-      // Reduced delay from 1500ms to 500ms
       setTimeout(() => {
         setSubmitted(true);
         setSubmitting(false);
@@ -508,7 +548,7 @@ const AISurvey = () => {
                 </div>
                 <div className="bg-indigo-50 p-6 rounded-xl border-2 border-indigo-200 shadow-sm">
                   <Users className="w-10 h-10 text-indigo-600 mb-3" />
-                  <h3 className="font-bold text-gray-900 mb-2">19 Questions</h3>
+                  <h3 className="font-bold text-gray-900 mb-2">23 Questions</h3>
                   <p className="text-sm text-gray-800">Quick and easy to complete, approximately 5-7 minutes</p>
                 </div>
                 <div className="bg-purple-50 p-6 rounded-xl border-2 border-purple-200 shadow-sm">
