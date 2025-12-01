@@ -1,802 +1,370 @@
-import React, { useState } from 'react';
-import { ChevronRight, CheckCircle, Coffee, Sparkles, TrendingUp, Users, Target, BarChart3, ShieldCheck, BrainCircuit } from 'lucide-react';
+/* --- RESET & BASICS --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-const AISurvey = () => {
-  const [started, setStarted] = useState(false);
-  const [currentSection, setCurrentSection] = useState(0);
-  const [responses, setResponses] = useState({});
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [validationError, setValidationError] = useState('');
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f9fafb;
+  color: #111827;
+  line-height: 1.5;
+}
 
-  const resetSurvey = () => {
-    setStarted(false);
-    setCurrentSection(0);
-    setResponses({});
-    setSubmitted(false);
-    setSubmitting(false);
-    setValidationError('');
-  };
+/* --- UTILITY CLASSES --- */
 
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwY8cBDIf6FPRJYeg3G7gYePZNKxGK26wm5qgJPapRycu1bEmohTgZD52VVHniXBJKH/exec';
+/* Layout */
+.min-h-screen { min-height: 100vh; }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.max-w-4xl { max-width: 56rem; }
+.max-w-5xl { max-width: 64rem; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.overflow-hidden { overflow: hidden; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-col-reverse { flex-direction: column-reverse; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.flex-1 { flex: 1 1 0%; }
+.grid { display: grid; }
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
 
-  const isLeadership = responses.roleLevel === 'director' || responses.roleLevel === 'executive';
+/* Screen Reader Only (Hides the radio dot for Likert scale) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
 
-  const sections = [
-    {
-      title: "Organizational Profile & Demographics",
-      questions: [
-        {
-          id: 'organizationName',
-          text: 'What is your organisation\'s name?',
-          type: 'text',
-          required: true
-        },
-        {
-          id: 'industry',
-          text: '1. Which industry best describes your organisation?',
-          type: 'select',
-          options: ['Technology / Software', 'Financial Services', 'Real Estate', 'Healthcare', 'Education', 'Government / Public Sector', 'Retail / E-commerce', 'Manufacturing', 'Professional Services', 'Media / Creative', 'Other']
-        },
-        {
-          id: 'department',
-          text: '2. Which department best describes your primary function?',
-          type: 'select',
-          options: ['CEO / COO / CFO', 'Sales', 'Marketing', 'Customer Services', 'Strategy', 'Engineering / IT', 'HR', 'Finance', 'Operations', 'Legal', 'Other']
-        },
-        {
-          id: 'departmentOther',
-          text: 'If Other, please specify:',
-          type: 'text',
-          dependsOn: 'department',
-          dependsValue: 'Other'
-        },
-        {
-          id: 'roleLevel',
-          text: '3. What is your current role level?',
-          type: 'radio',
-          options: [
-            { value: 'ic', label: 'Individual Contributor / Specialist' },
-            { value: 'lead', label: 'Team Lead / Supervisor' },
-            { value: 'manager', label: 'Manager / Senior Manager' },
-            { value: 'director', label: 'Director / VP' },
-            { value: 'executive', label: 'Executive Leadership (C-Suite, SVP)' }
-          ]
-        },
-        {
-          id: 'tenure',
-          text: '4. How long have you been with the organization?',
-          type: 'radio',
-          options: [
-            { value: '<1', label: 'Less than 1 year' },
-            { value: '1-3', label: '1–3 years' },
-            { value: '3-5', label: '3–5 years' },
-            { value: '>5', label: 'More than 5 years' }
-          ]
-        },
-        {
-          id: 'revenue',
-          text: '5. (Leadership Only) What is the organization\'s approximate annual revenue/turnover range?',
-          type: 'select',
-          options: ['<$1M', '$1M-$10M', '$10M-$50M', '>$50M'],
-          conditional: true
-        },
-        {
-          id: 'headcount',
-          text: '6. (Leadership Only) What is the current total headcount of the organization?',
-          type: 'select',
-          options: ['1–10', '10–25', '25–50', '50–100', '100–200', '200+'],
-          conditional: true
-        }
-      ]
-    },
-    {
-      title: "Strategy, Data & Operating Model",
-      questions: [
-        {
-          id: 'aiStrategy',
-          text: '7. How would you describe your organization\'s current AI Strategy?',
-          type: 'radio',
-          options: [
-            { value: 'none', label: 'Experimenting without a formal plan' },
-            { value: 'developing', label: 'Roadmap is being defined' },
-            { value: 'defined', label: 'Strategy and budget are in place' },
-            { value: 'scaling', label: 'Strategy is embedded in operations' }
-          ]
-        },
-        {
-          id: 'operatingModel',
-          text: '8. Which "Operating Model" best describes how AI initiatives are managed?',
-          type: 'radio',
-          options: [
-            { value: 'decentralized', label: 'Managed independently by teams/departments' },
-            { value: 'centralized', label: 'Managed by a dedicated central team' },
-            { value: 'federated', label: 'Central guidance with team-based execution' }
-          ]
-        },
-        {
-          id: 'dataMaturity',
-          text: '9. How would you rate your organization\'s "Data Maturity" regarding AI readiness?',
-          type: 'radio',
-          options: [
-            { value: 'siloed', label: 'Data is siloed or requires manual work' },
-            { value: 'managed', label: 'Data stored centrally but access can be slow' },
-            { value: 'integrated', label: 'Data is governed and easy to access' },
-            { value: 'strategic', label: 'Real-time data drives automated decisions' }
-          ]
-        },
-        {
-          id: 'dataGovernance',
-          text: '10. "Our organization has strong data governance, ensuring data quality, privacy, and clear ownership."',
-          type: 'likert'
-        }
-      ]
-    },
-    {
-      title: "Usage, Tools & Proficiency",
-      questions: [
-        {
-          id: 'frequency',
-          text: '11. How frequently do you currently use Generative AI tools (like ChatGPT, Claude, Copilot) to assist with work tasks?',
-          type: 'radio',
-          options: [
-            { value: 'daily-multiple', label: 'Daily - Multiple times a day' },
-            { value: 'daily-once', label: 'Daily - Once or twice a day' },
-            { value: 'weekly', label: 'Weekly - A few times a week' },
-            { value: 'adhoc', label: 'Ad-hoc - Rarely, only for specific non-routine tasks' },
-            { value: 'never', label: 'Never - I do not currently use these tools' }
-          ]
-        },
-        {
-          id: 'training',
-          text: '12. What level of formal AI training have you received from the organization?',
-          type: 'radio',
-          options: [
-            { value: 'none', label: 'None - I am completely self-taught' },
-            { value: 'basic', label: 'Basic - Access to guidelines or a one-off intro session' },
-            { value: 'structured', label: 'Structured - Regular workshops, prompting courses, or certification' },
-            { value: 'advanced', label: 'Advanced - Deep technical training or "AI Champion" program' }
-          ]
-        },
-        {
-          id: 'talentReadiness',
-          text: '13. "Our organization actively recruits AI talent and/or provides sufficient upskilling opportunities for existing staff."',
-          type: 'likert'
-        },
-        {
-          id: 'tools',
-          text: '14. Which of the following AI tools have you used for work purposes in the last 30 days? (Select all that apply)',
-          type: 'checkbox',
-          options: [
-            'OpenAI (ChatGPT)',
-            'Microsoft Copilot',
-            'Google Gemini',
-            'Anthropic Claude',
-            'DeepSeek',
-            'Cursor (AI Code Editor)',
-            'Qwen',
-            'Kimi',
-            'Midjourney / DALL-E (Image Generation)',
-            'GitHub Copilot',
-            'Perplexity AI',
-            'Internal Company AI Tools',
-            'Other'
-          ]
-        },
-        {
-          id: 'toolsOther',
-          text: 'If Other, please specify:',
-          type: 'text',
-          dependsOn: 'tools',
-          dependsValue: 'Other'
-        },
-        {
-          id: 'proficiency',
-          text: '15. How would you rate your own proficiency in using AI tools effectively?',
-          type: 'radio',
-          options: [
-            { value: '1', label: '1 - Novice (I am just starting to explore)' },
-            { value: '2', label: '2 - Beginner (I can do basic Q&A but struggle to get complex results)' },
-            { value: '3', label: '3 - Intermediate (I use it regularly for specific tasks and feel comfortable)' },
-            { value: '4', label: '4 - Advanced (I can craft complex prompts and integrate it into my workflow)' }
-          ]
-        },
-        {
-          id: 'personalUse',
-          text: '16. To get your job done efficiently, are there AI tools you sometimes use on personal devices or accounts because the company doesn\'t currently provide access to them?',
-          type: 'radio',
-          options: [
-            { value: 'frequently', label: 'Yes, frequently' },
-            { value: 'occasionally', label: 'Yes, occasionally' },
-            { value: 'never', label: 'No, never' }
-          ]
-        }
-      ]
-    },
-    {
-      title: "Workflow Integration & Barriers",
-      questions: [
-        {
-          id: 'integration',
-          text: '17. How integrated is AI into your current workflow?',
-          type: 'radio',
-          options: [
-            { value: 'none', label: 'Not integrated (I don\'t use it)' },
-            { value: 'sidecar', label: 'Standalone "Sidecar" (I switch tabs to a chatbot, copy-paste info in, copy-paste results out)' },
-            { value: 'partial', label: 'Partially Embedded (It is built into some software I use, like Office 365 or my code editor)' },
-            { value: 'full', label: 'Fully Integrated (AI agents automate steps in my process without me needing to prompt a chatbot manually)' }
-          ]
-        },
-        {
-          id: 'barriers',
-          text: '18. What are the BIGGEST barriers preventing you from using AI more effectively at work? (Select up to three)',
-          type: 'checkbox',
-          maxSelections: 3,
-          options: [
-            'Lack of access to the right tools (Budget/IT blocking)',
-            'Lack of training / Don\'t know how to use it effectively',
-            'Data privacy & security concerns',
-            'Unclear company policy (Not sure what is allowed)',
-            'Fear of output accuracy / hallucinations',
-            'No clear use case for my specific role',
-            'None - I face no significant barriers'
-          ]
-        },
-        {
-          id: 'collaboration',
-          text: '19. Do you share AI prompts, custom instructions, or "bots" with your colleagues?',
-          type: 'radio',
-          options: [
-            { value: 'never', label: 'No, I work in isolation' },
-            { value: 'informally', label: 'Yes, occasionally/informally (e.g., via chat)' },
-            { value: 'library', label: 'Yes, we have a shared prompt library or team workspace' }
-          ]
-        },
-        {
-          id: 'value',
-          text: '20. Based on your experience, where does AI currently add the most value to your work? (Select up to three)',
-          type: 'checkbox',
-          maxSelections: 3,
-          options: [
-            'Speeding up repetitive tasks (efficiency)',
-            'Improving the quality/accuracy of my output',
-            'Brainstorming and creative ideation',
-            'Summarizing large amounts of information',
-            'Coding or technical assistance',
-            'It does not currently add value'
-          ]
-        },
-        {
-          id: 'futureValue',
-          text: '21. Where in the business do you see the greatest need to adopt AI for future value creation? (Select up to three)',
-          type: 'checkbox',
-          maxSelections: 3,
-          options: [
-            'Customer Service & Support',
-            'Sales & Marketing Optimization',
-            'Product Development & Innovation',
-            'Operations & Supply Chain Efficiency',
-            'Finance & Administration (Automation)',
-            'Human Resources & Talent Management',
-            'Legal, Risk & Compliance',
-            'Strategy & Decision Making'
-          ]
-        },
-        {
-          id: 'taskWish',
-          text: '22. Describe one manual, repetitive, or time-consuming task you perform regularly that you wish an AI tool could handle or simplify for you.',
-          type: 'textarea'
-        }
-      ]
-    },
-    {
-      title: "Leadership Readiness & Strategic Vision",
-      subtitle: "Please rate your agreement with the following statements (1 = Strongly Disagree, 5 = Strongly Agree)",
-      questions: [
-        {
-          id: 'visionClarity',
-          text: '23. "I clearly understand the organization\'s vision and strategy for adopting Artificial Intelligence."',
-          type: 'likert'
-        },
-        {
-          id: 'leadershipUnderstanding',
-          text: '24. "I feel leadership understands the practical realities and challenges of using AI in my specific job role."',
-          type: 'likert'
-        },
-        {
-          id: 'resources',
-          text: '25. "I feel I have the necessary time and resources (training, budget) to learn and adopt new AI tools."',
-          type: 'likert'
-        },
-        {
-          id: 'culture',
-          text: '26. "The culture in my department is generally open to adopting new technologies and changing how we work."',
-          type: 'likert'
-        }
-      ]
-    },
-    {
-      title: "Governance, Risk & Ethics",
-      questions: [
-        {
-          id: 'policyAwareness',
-          text: '27. Are you aware of an official organization-wide "AI Acceptable Use Policy" or set of guidelines?',
-          type: 'radio',
-          options: [
-            { value: 'read', label: 'Yes, I have read it.' },
-            { value: 'aware', label: 'Yes, I know it exists but haven\'t read the details.' },
-            { value: 'no', label: 'No, I am not aware of one.' },
-            { value: 'unsure', label: 'Unsure.' }
-          ]
-        },
-        {
-          id: 'riskManagement',
-          text: '28. "Our organization has a defined framework for assessing and mitigating AI-related risks (e.g., bias, security, legal)."',
-          type: 'likert'
-        },
-        {
-          id: 'dataConfidence',
-          text: '29. How confident are you that you know what types of company data are safe to share with public AI models (like ChatGPT) versus what must be kept private?',
-          type: 'radio',
-          options: [
-            { value: '1', label: '1 - Not confident at all (I am confused about what is allowed)' },
-            { value: '2', label: '2 - Somewhat insecure' },
-            { value: '3', label: '3 - Neutral' },
-            { value: '4', label: '4 - Mostly confident' },
-            { value: '5', label: '5 - Very confident (I clearly understand data classification)' }
-          ]
-        },
-        {
-          id: 'ethicalSupport',
-          text: '30. "When I use AI, I feel supported by the organization to make ethical decisions about how its output is used (e.g., checking for bias, ensuring accuracy)."',
-          type: 'likert'
-        }
-      ]
-    }
-  ];
+/* Spacing (Padding/Margin) */
+.p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; }
+.p-6 { padding: 1.5rem; }
+.p-8 { padding: 2rem; }
+.p-10 { padding: 2.5rem; }
+.p-12 { padding: 3rem; }
+.px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.px-8 { padding-left: 2rem; padding-right: 2rem; }
+.px-10 { padding-left: 2.5rem; padding-right: 2.5rem; }
+.px-12 { padding-left: 3rem; padding-right: 3rem; }
+.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.py-5 { padding-top: 1.25rem; padding-bottom: 1.25rem; }
+.py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+.py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+.py-12 { padding-top: 3rem; padding-bottom: 3rem; }
 
-  const handleResponse = (questionId, value) => {
-    setResponses(prev => ({ ...prev, [questionId]: value }));
-    setValidationError(''); // Clear error when user starts answering
-  };
+.m-2 { margin: 0.5rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 0.75rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mb-8 { margin-bottom: 2rem; }
+.mb-10 { margin-bottom: 2.5rem; }
+.space-x-2 > * + * { margin-left: 0.5rem; }
+.space-x-3 > * + * { margin-left: 0.75rem; }
+.space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; }
+.space-y-8 > * + * { margin-top: 2rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
 
-  const handleCheckboxChange = (questionId, option, maxSelections) => {
-    setValidationError(''); // Clear error when user starts answering
-    setResponses(prev => {
-      const current = prev[questionId] || [];
-      const isSelected = current.includes(option);
-      
-      if (isSelected) {
-        return { ...prev, [questionId]: current.filter(item => item !== option) };
-      } else {
-        if (maxSelections && current.length >= maxSelections) {
-          return prev;
-        }
-        return { ...prev, [questionId]: [...current, option] };
-      }
-    });
-  };
+/* Sizing */
+.w-5 { width: 1.25rem; }
+.h-5 { height: 1.25rem; }
+.w-6 { width: 1.5rem; }
+.h-6 { height: 1.5rem; }
+.w-8 { width: 2rem; }
+.h-8 { height: 2rem; }
+.w-10 { width: 2.5rem; }
+.h-10 { height: 2.5rem; }
+.w-12 { width: 3rem; }
+.h-12 { height: 3rem; }
+.w-14 { width: 3.5rem; }
+.h-14 { height: 3.5rem; }
+.w-16 { width: 4rem; }
+.h-16 { height: 4rem; }
+.w-20 { width: 5rem; }
+.h-20 { height: 5rem; }
+.w-24 { width: 6rem; }
+.h-24 { height: 6rem; }
+.w-64 { width: 16rem; }
+.h-64 { height: 16rem; }
+.w-96 { width: 24rem; }
+.h-96 { height: 24rem; }
 
-  const validateSection = () => {
-    const currentQuestions = sections[currentSection].questions;
-    const unansweredQuestions = currentQuestions.filter(question => {
-      // Skip conditional questions that shouldn't be shown
-      if (question.conditional && !isLeadership) return false;
-      if (question.dependsOn && !responses[question.dependsOn]?.includes(question.dependsValue)) return false;
-      
-      // Check if question is answered
-      const answer = responses[question.id];
-      if (!answer || (Array.isArray(answer) && answer.length === 0)) {
-        return true; // Question is unanswered
-      }
-      return false;
-    });
+/* Negative Margins for Decorative Circles */
+.-mr-32 { margin-right: -8rem; }
+.-mt-32 { margin-top: -8rem; }
+.-ml-24 { margin-left: -6rem; }
+.-mb-24 { margin-bottom: -6rem; }
+.-mr-48 { margin-right: -12rem; }
+.-mt-48 { margin-top: -12rem; }
 
-    if (unansweredQuestions.length > 0) {
-      // UPDATED: Create a list of missing questions with proper line breaks
-      const missingList = unansweredQuestions.map(q => `• ${q.text}`).join('\n');
-      setValidationError(`Please answer the following questions before proceeding:\n${missingList}`);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return false;
-    }
-    return true;
-  };
+/* Typography */
+.text-center { text-align: center; }
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }
+.font-medium { font-weight: 500; }
+.italic { font-style: italic; }
+.uppercase { text-transform: uppercase; }
+.leading-relaxed { line-height: 1.625; }
+.whitespace-nowrap { white-space: nowrap; }
+.whitespace-pre-line { white-space: pre-line; }
 
-  const handleNext = () => {
-    if (validateSection()) {
-      setCurrentSection(prev => prev + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
+/* Font Sizes */
+.text-\[10px\] { font-size: 10px; }
+.text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+.text-base { font-size: 1rem; line-height: 1.5rem; }
+.text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+.text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+.text-2xl { font-size: 1.5rem; line-height: 2rem; }
+.text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+.text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+.text-5xl { font-size: 3rem; line-height: 1; }
 
-  const handlePrevious = () => {
-    setCurrentSection(prev => Math.max(0, prev - 1));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+/* Colors & Backgrounds */
+.text-white { color: #ffffff; }
+.text-gray-900 { color: #111827; }
+.text-gray-800 { color: #1f2937; }
+.text-blue-600 { color: #2563eb; }
+.text-indigo-600 { color: #4f46e5; }
+.text-purple-600 { color: #9333ea; }
+.text-green-600 { color: #16a34a; }
+.text-red-900 { color: #7f1d1d; }
 
-  const handleStart = () => {
-    setStarted(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+.bg-white { background-color: #ffffff; }
+.bg-gray-100 { background-color: #f3f4f6; }
+.bg-gray-200 { background-color: #e5e7eb; }
+.bg-blue-50 { background-color: #eff6ff; }
+.bg-indigo-50 { background-color: #eef2ff; }
+.bg-purple-50 { background-color: #faf5ff; }
+.bg-red-50 { background-color: #fef2f2; }
+.bg-green-100 { background-color: #dcfce7; }
+.bg-blue-600 { background-color: #2563eb; }
 
-  const handleSubmit = async () => {
-    // Validate last section before submitting
-    if (!validateSection()) {
-      return;
-    }
+/* Gradients */
+.bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
+.bg-gradient-to-br { background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)); }
+.from-blue-50 { --tw-gradient-from: #eff6ff; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(239, 246, 255, 0)); }
+.via-indigo-50 { --tw-gradient-stops: var(--tw-gradient-from), #eef2ff, var(--tw-gradient-to, rgba(238, 242, 255, 0)); }
+.to-purple-50 { --tw-gradient-to: #faf5ff; }
+.from-blue-600 { --tw-gradient-from: #2563eb; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(37, 99, 235, 0)); }
+.via-indigo-600 { --tw-gradient-stops: var(--tw-gradient-from), #4f46e5, var(--tw-gradient-to, rgba(79, 70, 229, 0)); }
+.to-purple-600 { --tw-gradient-to: #9333ea; }
+.to-indigo-600 { --tw-gradient-to: #4f46e5; }
+.from-gray-100 { --tw-gradient-from: #f3f4f6; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(243, 244, 246, 0)); }
+.to-gray-200 { --tw-gradient-to: #e5e7eb; }
+.from-white { --tw-gradient-from: #ffffff; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0)); }
+.to-blue-50 { --tw-gradient-to: #eff6ff; }
 
-    setSubmitting(true);
-    
-    try {
-      console.log('Submitting survey data:', responses);
-      
-      await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(responses),
-      });
-      
-      console.log('Data sent to Google Sheets');
-      
-      setTimeout(() => {
-        setSubmitted(true);
-        setSubmitting(false);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 500);
-      
-    } catch (err) {
-      console.error('Submission error:', err);
-      setTimeout(() => {
-        setSubmitted(true);
-        setSubmitting(false);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 500);
-    }
-  };
+/* Borders & Rounded */
+.border { border-width: 1px; }
+.border-2 { border-width: 2px; }
+.border-3 { border-width: 3px; }
+.border-l-4 { border-left-width: 4px; }
+.border-t-2 { border-top-width: 2px; }
+.border-t-transparent { border-top-color: transparent; }
+.border-gray-300 { border-color: #d1d5db; }
+.border-gray-400 { border-color: #9ca3af; }
+.border-blue-200 { border-color: #bfdbfe; }
+.border-indigo-200 { border-color: #c7d2fe; }
+.border-purple-200 { border-color: #e9d5ff; }
+.border-blue-600 { border-color: #2563eb; }
+.border-red-600 { border-color: #dc2626; }
+.border-white { border-color: #ffffff; }
 
-  const renderQuestion = (question) => {
-    if (question.conditional && !isLeadership) return null;
-    if (question.dependsOn && !responses[question.dependsOn]?.includes(question.dependsValue)) return null;
+.rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; }
+.rounded-2xl { border-radius: 1rem; }
+.rounded-3xl { border-radius: 1.5rem; }
+.rounded-full { border-radius: 9999px; }
 
-    // UPDATED: Added text-base to prevent iOS zoom
-    const commonClasses = "w-full p-3 md:p-4 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:border-blue-400 outline-none text-base";
+/* Effects */
+.shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+.shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+.shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+.opacity-10 { opacity: 0.1; }
+.opacity-50 { opacity: 0.5; }
 
-    switch (question.type) {
-      case 'select':
-        return (
-          <select
-            className={commonClasses}
-            value={responses[question.id] || ''}
-            onChange={(e) => handleResponse(question.id, e.target.value)}
-          >
-            <option value="">Select an option...</option>
-            {question.options.map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
-        );
+/* Transitions & Animation */
+.transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+.duration-200 { transition-duration: 200ms; }
+.duration-300 { transition-duration: 300ms; }
+.duration-500 { transition-duration: 500ms; }
+.ease-out { transition-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+.transform { transform: translateX(0) translateY(0) rotate(0) skewX(0) skewY(0) scaleX(1) scaleY(1); }
+.scale-105 { transform: scale(1.05); }
+.scale-110 { transform: scale(1.1); }
+.animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+.animate-spin { animation: spin 1s linear infinite; }
 
-      case 'radio':
-        return (
-          <div className="space-y-3">
-            {question.options.map(opt => (
-              <label key={opt.value} className="flex items-center space-x-3 p-4 rounded-xl border-2 border-gray-300 hover:border-blue-500 hover:bg-blue-50 cursor-pointer transition-all duration-200 group bg-white shadow-sm">
-                <input
-                  type="radio"
-                  name={question.id}
-                  value={opt.value}
-                  checked={responses[question.id] === opt.value}
-                  onChange={(e) => handleResponse(question.id, e.target.value)}
-                  className="w-5 h-5 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                />
-                <span className="text-gray-900 font-medium">{opt.label}</span>
-              </label>
-            ))}
-          </div>
-        );
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-      case 'checkbox':
-        return (
-          <div className="space-y-3">
-            {question.maxSelections && (
-              <div className="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-lg mb-4 shadow-sm">
-                <p className="text-sm text-gray-900 font-semibold">
-                  Select up to {question.maxSelections} options • {(responses[question.id] || []).length}/{question.maxSelections} selected
-                </p>
-              </div>
-            )}
-            {question.options.map(opt => (
-              <label key={opt} className="flex items-center space-x-3 p-4 rounded-xl border-2 border-gray-300 hover:border-blue-500 hover:bg-blue-50 cursor-pointer transition-all duration-200 group bg-white shadow-sm">
-                <input
-                  type="checkbox"
-                  checked={(responses[question.id] || []).includes(opt)}
-                  onChange={() => handleCheckboxChange(question.id, opt, question.maxSelections)}
-                  className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-                />
-                <span className="text-gray-900 font-medium">{opt}</span>
-              </label>
-            ))}
-          </div>
-        );
+/* --- COMPONENT STYLES --- */
 
-      case 'text':
-        return (
-          <input
-            type="text"
-            className={commonClasses}
-            value={responses[question.id] || ''}
-            onChange={(e) => handleResponse(question.id, e.target.value)}
-            placeholder="Type your answer..."
-          />
-        );
+/* Inputs - General */
+input, select, textarea {
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 16px; /* MOBILE FIX: Prevents iOS zoom on focus */
+}
 
-      case 'textarea':
-        return (
-          <textarea
-            className={commonClasses}
-            rows="5"
-            value={responses[question.id] || ''}
-            onChange={(e) => handleResponse(question.id, e.target.value)}
-            placeholder="Share your thoughts here..."
-          />
-        );
+/* Custom Checkbox and Radio Styles */
+input[type="radio"],
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #fff;
+  border-width: 1px;
+  border-style: solid; 
+  border-color: #d1d5db; /* gray-300 */
+  display: inline-block;
+  vertical-align: middle;
+  background-origin: border-box;
+  flex-shrink: 0; 
+  color: #2563eb; /* blue-600 */
+  
+  width: 1.25rem; 
+  height: 1.25rem;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+}
 
-      case 'likert':
-        return (
-          // UPDATED: Added responsive padding and gap
-          <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-3 md:p-8 rounded-2xl border-2 border-gray-300 shadow-md">
-            <div className="flex justify-between items-center mb-6 gap-2">
-              {[1, 2, 3, 4, 5].map(num => (
-                <label key={num} className="flex flex-col items-center space-y-3 cursor-pointer group flex-1">
-                  {/* UPDATED: Responsive sizing for circles (w-10/h-10 on mobile, w-16/h-16 on desktop) */}
-                  <div className={`w-10 h-10 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all duration-300 shadow-md ${
-                    responses[question.id] === num.toString() 
-                      ? 'bg-blue-600 text-white shadow-xl scale-110 md:scale-125 ring-2 md:ring-4 ring-blue-200' 
-                      : 'bg-white border-2 md:border-3 border-gray-400 text-gray-900 group-hover:border-blue-500 group-hover:scale-105 md:group-hover:scale-110 group-hover:shadow-lg'
-                  }`}>
-                    <input
-                      type="radio"
-                      name={question.id}
-                      value={num}
-                      checked={responses[question.id] === num.toString()}
-                      onChange={(e) => handleResponse(question.id, e.target.value)}
-                      className="sr-only"
-                    />
-                    {/* UPDATED: Responsive font size */}
-                    <span className="text-base md:text-xl font-bold">{num}</span>
-                  </div>
-                </label>
-              ))}
-            </div>
-            <div className="flex justify-between text-[10px] sm:text-xs md:text-sm font-semibold text-gray-900 px-1 md:px-4">
-              <span>Strongly Disagree</span>
-              <span>Neutral</span>
-              <span>Strongly Agree</span>
-            </div>
-          </div>
-        );
+/* Radio Button Circle */
+input[type="radio"] {
+  border-radius: 50%;
+}
 
-      default:
-        return null;
-    }
-  };
+/* Checkbox Rounded Square */
+input[type="checkbox"] {
+  border-radius: 0.25rem;
+}
 
-  // Welcome Page
-  if (!started) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
-        <div className="max-w-4xl w-full">
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-            {/* Hero Header */}
-            {/* UPDATED: Responsive padding and text */}
-            <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-6 md:p-12 text-center relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-10 rounded-full -mr-48 -mt-48"></div>
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-white opacity-10 rounded-full -ml-32 -mb-32"></div>
-              <div className="relative z-10">
-                <Sparkles className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 md:mb-6" />
-                <h1 className="text-3xl md:text-5xl font-bold mb-4">
-                  Organisational AI Maturity Assessment Survey
-                </h1>
-                <div className="flex items-center justify-center space-x-2 text-lg md:text-xl">
-                  <Coffee className="w-5 h-5 md:w-6 md:h-6" />
-                  <p>It will only take a coffee's time to complete</p>
-                </div>
-              </div>
-            </div>
+/* Checked State - Radio */
+input[type="radio"]:checked {
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+  border-color: transparent;
+  background-color: currentColor;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
-            {/* Introduction Content */}
-            <div className="p-6 md:p-12">
-              <div className="mb-8 md:mb-10">
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-6">Welcome!</h2>
-                <p className="text-base md:text-lg text-gray-900 leading-relaxed mb-4 md:mb-6">
-                  Thank you for participating in our AI Maturity Assessment. This survey is designed to help us understand your organisation's current AI adoption journey, identify opportunities for growth, and develop strategies to maximize AI's potential within your team.
-                </p>
-                <p className="text-base md:text-lg text-gray-900 leading-relaxed">
-                  Your honest feedback will help shape our AI transformation roadmap and ensure we're providing the right tools, training, and support for everyone.
-                </p>
-              </div>
+/* Checked State - Checkbox */
+input[type="checkbox"]:checked {
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+  border-color: transparent;
+  background-color: currentColor;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
-              {/* Key Points */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10">
-                <div className="bg-blue-50 p-6 rounded-xl border-2 border-blue-200 shadow-sm">
-                  <TrendingUp className="w-8 h-8 md:w-10 md:h-10 text-blue-600 mb-3" />
-                  <h3 className="font-bold text-gray-900 mb-2">6 Sections</h3>
-                  <p className="text-sm text-gray-800">Covering strategy, tools, workflow, and governance</p>
-                </div>
-                <div className="bg-indigo-50 p-6 rounded-xl border-2 border-indigo-200 shadow-sm">
-                  <Users className="w-8 h-8 md:w-10 md:h-10 text-indigo-600 mb-3" />
-                  <h3 className="font-bold text-gray-900 mb-2">30 Questions</h3>
-                  <p className="text-sm text-gray-800">Quick and easy to complete, approximately 7-10 minutes</p>
-                </div>
-                <div className="bg-purple-50 p-6 rounded-xl border-2 border-purple-200 shadow-sm">
-                  <Target className="w-8 h-8 md:w-10 md:h-10 text-purple-600 mb-3" />
-                  <h3 className="font-bold text-gray-900 mb-2">Confidential</h3>
-                  <p className="text-sm text-gray-800">Your responses help us improve our AI strategy</p>
-                </div>
-              </div>
+/* Focus States for Inputs */
+input[type="radio"]:focus,
+input[type="checkbox"]:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2563eb;
+}
 
-              {/* Start Button */}
-              <button
-                onClick={handleStart}
-                className="w-full flex items-center justify-center space-x-3 px-6 py-4 md:px-10 md:py-5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-bold text-lg md:text-xl shadow-xl hover:shadow-2xl transform hover:scale-105"
-              >
-                <span>Start Survey</span>
-                <ChevronRight className="w-6 h-6" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+/* Specific Focus/Hover States from App.js */
+.hover\:from-blue-700:hover { --tw-gradient-from: #1d4ed8; }
+.hover\:to-indigo-700:hover { --tw-gradient-to: #4338ca; }
+.hover\:bg-gray-50:hover { background-color: #f9fafb; }
+.hover\:border-gray-500:hover { border-color: #6b7280; }
+.hover\:border-blue-400:hover { border-color: #60a5fa; }
+.hover\:border-blue-500:hover { border-color: #3b82f6; }
+.hover\:bg-blue-50:hover { background-color: #eff6ff; }
+.hover\:shadow-lg:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+.hover\:shadow-2xl:hover { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+.hover\:scale-105:hover { transform: scale(1.05); }
 
-  if (submitted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 max-w-md text-center">
-          <div className="bg-green-100 w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-            <CheckCircle className="w-12 h-12 md:w-14 md:h-14 text-green-600" />
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Thank You!</h2>
-          <p className="text-base md:text-lg text-gray-900 mb-8">Your responses have been submitted successfully.</p>
-          <div className="flex items-center justify-center space-x-2 text-blue-600 mb-8">
-            <Sparkles className="w-5 h-5 md:w-6 md:h-6" />
-            <span className="font-semibold text-base md:text-lg">We appreciate your time and insights</span>
-          </div>
-          <button
-            onClick={resetSurvey}
-            className="w-full md:w-auto px-8 py-4 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl"
-          >
-            Start New Survey
-          </button>
-        </div>
-      </div>
-    );
-  }
+.group:hover .group-hover\:border-blue-500 { border-color: #3b82f6; }
+.group:hover .group-hover\:scale-105 { transform: scale(1.05); }
+.group:hover .group-hover\:shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
 
-  const currentSectionData = sections[currentSection];
-  const progress = ((currentSection + 1) / sections.length) * 100;
+.focus\:ring-2:focus { box-shadow: 0 0 0 2px #3b82f6; } /* Simplified ring */
+.focus\:border-blue-500:focus { border-color: #3b82f6; }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-4 px-3 md:py-12 md:px-4">
-      <div className="max-w-5xl mx-auto">
-        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-6 md:p-10 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full -ml-24 -mb-24"></div>
-            <div className="relative z-10">
-              <div className="flex items-center space-x-3 mb-3">
-                <Sparkles className="w-8 h-8 md:w-10 md:h-10" />
-                <h1 className="text-2xl md:text-4xl font-bold">Organisational AI Maturity Assessment Survey</h1>
-              </div>
-            </div>
-          </div>
+.disabled\:opacity-50:disabled { opacity: 0.5; }
+.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
 
-          {/* Progress Bar */}
-          <div className="bg-gray-200 h-4 relative">
-            <div 
-              className="bg-gradient-to-r from-blue-600 to-purple-600 h-4 transition-all duration-500 ease-out relative shadow-lg"
-              style={{ width: `${progress}%` }}
-            >
-              <div className="absolute right-0 top-0 w-2 h-4 bg-white opacity-50 animate-pulse"></div>
-            </div>
-          </div>
+/* --- RESPONSIVE MEDIA QUERIES (The Fix for Mobile) --- */
+@media (min-width: 768px) {
+  /* Layout */
+  .md\:flex-row { flex-direction: row; }
+  .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .md\:gap-0 { gap: 0; }
+  .md\:gap-6 { gap: 1.5rem; }
+  
+  /* Sizing */
+  .md\:w-auto { width: auto; }
+  .md\:w-6 { width: 1.5rem; }
+  .md\:h-6 { height: 1.5rem; }
+  .md\:w-10 { width: 2.5rem; }
+  .md\:h-10 { height: 2.5rem; }
+  .md\:w-14 { width: 3.5rem; }
+  .md\:h-14 { height: 3.5rem; }
+  .md\:w-16 { width: 4rem; }
+  .md\:h-16 { height: 4rem; }
+  .md\:w-24 { width: 6rem; }
+  .md\:h-24 { height: 6rem; }
 
-          {/* Content */}
-          <div className="p-4 md:p-12">
-            {/* Validation Error Message */}
-            {validationError && (
-              <div className="mb-6 bg-red-50 border-l-4 border-red-600 p-4 md:p-6 rounded-xl shadow-lg animate-pulse">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-base md:text-lg font-bold text-red-900 whitespace-pre-line">{validationError}</p>
-                  </div>
-                </div>
-              </div>
-            )}
+  /* Spacing */
+  .md\:p-6 { padding: 1.5rem; }
+  .md\:p-8 { padding: 2rem; }
+  .md\:p-10 { padding: 2.5rem; }
+  .md\:p-12 { padding: 3rem; }
+  .md\:px-4 { padding-left: 1rem; padding-right: 1rem; }
+  .md\:px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .md\:px-8 { padding-left: 2rem; padding-right: 2rem; }
+  .md\:px-10 { padding-left: 2.5rem; padding-right: 2.5rem; }
+  .md\:px-12 { padding-left: 3rem; padding-right: 3rem; }
+  .md\:py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+  .md\:py-5 { padding-top: 1.25rem; padding-bottom: 1.25rem; }
+  .md\:py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+  .md\:py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+  .md\:mb-6 { margin-bottom: 1.5rem; }
+  .md\:mb-10 { margin-bottom: 2.5rem; }
 
-            <div className="mb-8 md:mb-10">
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-6 gap-4">
-                <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
-                  {currentSectionData.title}
-                </h2>
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-xs md:text-sm font-bold shadow-lg whitespace-nowrap">
-                  Section {currentSection + 1} of {sections.length}
-                </div>
-              </div>
-              {currentSectionData.subtitle && (
-                <p className="text-gray-900 italic text-base md:text-xl bg-blue-50 p-4 md:p-6 rounded-xl border-l-4 border-blue-600 shadow-sm font-medium">{currentSectionData.subtitle}</p>
-              )}
-            </div>
+  /* Typography */
+  .md\:text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+  .md\:text-base { font-size: 1rem; line-height: 1.5rem; }
+  .md\:text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+  .md\:text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+  .md\:text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+  .md\:text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+  .md\:text-5xl { font-size: 3rem; line-height: 1; }
 
-            <div className="space-y-6 md:space-y-8">
-              {currentSectionData.questions.map((question) => {
-                if (question.conditional && !isLeadership) return null;
-                if (question.dependsOn && !responses[question.dependsOn]?.includes(question.dependsValue)) return null;
-
-                return (
-                  <div key={question.id} className="bg-gradient-to-br from-white to-blue-50 p-4 md:p-8 rounded-2xl border-2 border-gray-300 shadow-lg hover:shadow-xl transition-shadow duration-200">
-                    <label className="block text-gray-900 font-bold mb-4 md:mb-6 text-lg md:text-xl">
-                      {question.text}
-                    </label>
-                    {renderQuestion(question)}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <div className="bg-gradient-to-r from-gray-100 to-gray-200 px-6 py-6 md:px-12 md:py-8 flex flex-col-reverse md:flex-row justify-between items-center border-t-2 border-gray-300 gap-4 md:gap-0">
-            <button
-              onClick={handlePrevious}
-              disabled={currentSection === 0}
-              className="w-full md:w-auto flex justify-center items-center space-x-2 px-6 py-3 md:px-8 md:py-4 rounded-xl bg-white border-2 border-gray-400 text-gray-900 hover:bg-gray-50 hover:border-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-bold shadow-md hover:shadow-lg"
-            >
-              <span>← Previous</span>
-            </button>
-
-            {currentSection < sections.length - 1 ? (
-              <button
-                onClick={handleNext}
-                className="w-full md:w-auto flex justify-center items-center space-x-2 px-6 py-3 md:px-10 md:py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-bold shadow-xl hover:shadow-2xl transform hover:scale-105"
-              >
-                <span>Next Section</span>
-                <ChevronRight className="w-6 h-6" />
-              </button>
-            ) : (
-              <button
-                onClick={handleSubmit}
-                disabled={submitting}
-                className="w-full md:w-auto flex justify-center items-center space-x-2 px-6 py-3 md:px-10 md:py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-bold shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {submitting ? (
-                  <>
-                    <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Submitting...</span>
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="w-6 h-6" />
-                    <span>Submit Survey</span>
-                  </>
-                )}
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default AISurvey;
+  /* Other */
+  .md\:ring-4 { box-shadow: 0 0 0 4px #bfdbfe; }
+  .md\:border-3 { border-width: 3px; }
+  .md\:scale-125 { transform: scale(1.25); }
+  .group:hover .md\:group-hover\:scale-110 { transform: scale(1.1); }
+}
