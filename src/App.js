@@ -14,7 +14,8 @@ import {
   AlertCircle,
   TrendingUp,
   Zap,
-  Loader2
+  Loader2,
+  Coffee
 } from 'lucide-react';
 
 // --- CONFIGURATION ---
@@ -371,21 +372,21 @@ function App() {
 
   const submitToGoogleSheets = async (data) => {
     setIsSubmitting(true);
-    try {
-      const flatData = flattenData(data);
-      await fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors", 
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(flatData),
-      });
-      setIsSubmitted(true);
-    } catch (error) {
-      console.error("Error submitting:", error);
-      alert("There was an error submitting your survey. Please try again.");
-    } finally {
+    const flatData = flattenData(data);
+    
+    // Fire and forget (Optimistic UI update)
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors", 
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(flatData),
+    }).catch(err => console.error("Bg Error:", err));
+
+    // Fast feedback: Show "Submitting..." for 800ms then show success
+    setTimeout(() => {
       setIsSubmitting(false);
-    }
+      setIsSubmitted(true);
+    }, 800); 
   };
 
   const handleNext = () => {
@@ -411,36 +412,47 @@ function App() {
       title: "Welcome",
       content: (
         <div className="welcome-hero">
-          <div style={{ position: 'relative', width: '96px', height: '96px', margin: '0 auto 30px' }}>
-            <div style={{ position: 'absolute', inset: 0, background: '#6366f1', borderRadius: '50%', filter: 'blur(20px)', opacity: 0.5 }}></div>
-            <div style={{ position: 'relative', width: '100%', height: '100%', background: 'linear-gradient(to top right, #7c3aed, #4f46e5)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 25px rgba(79, 70, 229, 0.4)' }}>
+          {/* Animated Icon Circle */}
+          <div className="hero-icon-container">
+            <div className="hero-icon-bg"></div>
+            <div className="hero-icon-wrapper">
               <TrendingUp size={48} color="white" />
             </div>
           </div>
           
+          {/* Main Title */}
           <h2 className="hero-title">
-            Accelerating our Future with AI
+            Accelerating our future with AI:
           </h2>
           
-          <p className="hero-desc">
-            We are launching this survey to <span className="highlight">understand the AI adoption journey of Australian businesses</span> and identify <span className="highlight">high-impact opportunities for improvement and growth</span>.
-          </p>
+          {/* Expanded & Improved Intro Text */}
+          <div className="hero-desc">
+            <p>
+              We aim to deeply understand the <span className="highlight">AI adoption journey</span> across Australian businesses—where organisations are today, what challenges they face, and what opportunities remain untapped.
+            </p>
+            <p style={{ marginTop: '16px' }}>
+              Our goal is to identify <span className="highlight">high-impact use cases</span>, uncover productivity uplift opportunities across the organisation, and provide a clear roadmap for achieving sustainable, value-driven AI growth.
+            </p>
+          </div>
           
-          <div style={{ background: 'linear-gradient(to bottom right, #ffffff, #f8fafc)', padding: '30px', borderRadius: '24px', border: '1px solid #e0e7ff', display: 'inline-block', textAlign: 'left', maxWidth: '500px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#312e81', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Polished "What to expect" Box */}
+          <div className="expectations-card">
+            <h3 className="expectations-title">
               <Zap size={20} color="#4f46e5" /> What to expect:
             </h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '15px', color: '#334155' }}>
-              {[
-                "It takes about 5 minutes.",
-                "Your answers shape our strategy.",
-                "We want your honest thoughts!"
-              ].map((text, i) => (
-                <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#e0e7ff', color: '#4f46e5', fontSize: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{i+1}</div>
-                  {text}
-                </li>
-              ))}
+            <ul className="expectations-list">
+              <li className="expectations-item">
+                <div className="icon-bullet"><Coffee size={14} strokeWidth={3} /></div>
+                <span>It takes just one coffee's time ☕</span>
+              </li>
+              <li className="expectations-item">
+                <div className="icon-bullet"><Target size={14} strokeWidth={3} /></div>
+                <span>Your insights directly shape our roadmap.</span>
+              </li>
+              <li className="expectations-item">
+                <div className="icon-bullet"><ShieldCheck size={14} strokeWidth={3} /></div>
+                <span>We want your <strong>candid</strong> thoughts.</span>
+              </li>
             </ul>
           </div>
         </div>
