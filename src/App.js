@@ -1,370 +1,87 @@
-/* --- RESET & BASICS --- */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+import React, { useState } from 'react';
+import { Sparkles, Code, FileCode, Layers } from 'lucide-react';
+// This import expects you to have the index.css file in the same folder
+import './index.css';
+
+function App() {
+const [activeTab, setActiveTab] = useState('preview');
+
+return (
+<div className="min-h-screen flex flex-col items-center justify-center p-6 bg-slate-50">
+
+  <main className="max-w-4xl w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
+    
+    {/* Header */}
+    <header className="bg-white border-b border-slate-100 p-8 text-center">
+      <div className="inline-flex items-center justify-center p-3 bg-blue-50 rounded-full mb-4">
+        <Sparkles className="w-8 h-8 text-blue-500" />
+      </div>
+      <h1 className="text-3xl font-bold text-slate-800 mb-2">
+        React Single-File Structure
+      </h1>
+      <p className="text-slate-500 max-w-lg mx-auto">
+        This example demonstrates how we combine logic and styles for the preview environment, while keeping them logically distinct for easy export.
+      </p>
+    </header>
+
+    {/* Content Area */}
+    <div className="p-8 bg-slate-50/50">
+      <div className="grid md:grid-cols-2 gap-6">
+        
+        {/* Logic Card */}
+        <div className="card-hover bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+          <div className="flex items-center mb-4">
+            <div className="p-2 bg-indigo-100 rounded-lg mr-3">
+              <Code className="w-5 h-5 text-indigo-600" />
+            </div>
+            <h2 className="text-xl font-semibold text-slate-800">App.js Logic</h2>
+          </div>
+          <p className="text-slate-600 mb-4">
+            Your React components, hooks (<code>useState</code>), and JSX structure live here. In this file, it's the <code>App</code> function and any sub-components.
+          </p>
+          <div className="bg-slate-900 rounded-md p-3">
+            <code className="text-xs text-indigo-300 font-mono">
+              function App() &#123; ... &#125;
+            </code>
+          </div>
+        </div>
+
+        {/* Style Card */}
+        <div className="card-hover bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+          <div className="flex items-center mb-4">
+            <div className="p-2 bg-pink-100 rounded-lg mr-3">
+              <Layers className="w-5 h-5 text-pink-600" />
+            </div>
+            <h2 className="text-xl font-semibold text-slate-800">Index.css Styles</h2>
+          </div>
+          <p className="text-slate-600 mb-4">
+            Standard CSS and global styles are injected via a <code>&lt;style&gt;</code> tag or component (like <code>GlobalStyles</code> above) to ensure they render correctly in the preview.
+          </p>
+          <div className="bg-slate-900 rounded-md p-3">
+            <code className="text-xs text-pink-300 font-mono">
+              .card-hover &#123; transition: ... &#125;
+            </code>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    {/* Footer info */}
+    <div className="bg-white border-t border-slate-100 p-6">
+        <div className="flex items-start gap-3 text-sm text-slate-500 bg-blue-50 p-4 rounded-lg border border-blue-100">
+            <FileCode className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+            <div>
+                <span className="font-semibold text-blue-700">Export Tip:</span> When moving this to your local machine, simply copy the CSS content into <code>index.css</code> and the Component logic into <code>App.js</code>.
+            </div>
+        </div>
+    </div>
+
+  </main>
+</div>
+
+
+);
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #f9fafb;
-  color: #111827;
-  line-height: 1.5;
-}
-
-/* --- UTILITY CLASSES --- */
-
-/* Layout */
-.min-h-screen { min-height: 100vh; }
-.w-full { width: 100%; }
-.h-full { height: 100%; }
-.max-w-4xl { max-width: 56rem; }
-.max-w-5xl { max-width: 64rem; }
-.mx-auto { margin-left: auto; margin-right: auto; }
-.overflow-hidden { overflow: hidden; }
-.relative { position: relative; }
-.absolute { position: absolute; }
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.flex-col-reverse { flex-direction: column-reverse; }
-.items-center { align-items: center; }
-.items-start { align-items: flex-start; }
-.justify-center { justify-content: center; }
-.justify-between { justify-content: space-between; }
-.flex-1 { flex: 1 1 0%; }
-.grid { display: grid; }
-.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
-
-/* Screen Reader Only (Hides the radio dot for Likert scale) */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-/* Spacing (Padding/Margin) */
-.p-3 { padding: 0.75rem; }
-.p-4 { padding: 1rem; }
-.p-6 { padding: 1.5rem; }
-.p-8 { padding: 2rem; }
-.p-10 { padding: 2.5rem; }
-.p-12 { padding: 3rem; }
-.px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
-.px-4 { padding-left: 1rem; padding-right: 1rem; }
-.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-.px-8 { padding-left: 2rem; padding-right: 2rem; }
-.px-10 { padding-left: 2.5rem; padding-right: 2.5rem; }
-.px-12 { padding-left: 3rem; padding-right: 3rem; }
-.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
-.py-5 { padding-top: 1.25rem; padding-bottom: 1.25rem; }
-.py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
-.py-8 { padding-top: 2rem; padding-bottom: 2rem; }
-.py-12 { padding-top: 3rem; padding-bottom: 3rem; }
-
-.m-2 { margin: 0.5rem; }
-.mb-2 { margin-bottom: 0.5rem; }
-.mb-3 { margin-bottom: 0.75rem; }
-.mb-4 { margin-bottom: 1rem; }
-.mb-6 { margin-bottom: 1.5rem; }
-.mb-8 { margin-bottom: 2rem; }
-.mb-10 { margin-bottom: 2.5rem; }
-.space-x-2 > * + * { margin-left: 0.5rem; }
-.space-x-3 > * + * { margin-left: 0.75rem; }
-.space-y-3 > * + * { margin-top: 0.75rem; }
-.space-y-6 > * + * { margin-top: 1.5rem; }
-.space-y-8 > * + * { margin-top: 2rem; }
-.gap-2 { gap: 0.5rem; }
-.gap-4 { gap: 1rem; }
-.gap-6 { gap: 1.5rem; }
-
-/* Sizing */
-.w-5 { width: 1.25rem; }
-.h-5 { height: 1.25rem; }
-.w-6 { width: 1.5rem; }
-.h-6 { height: 1.5rem; }
-.w-8 { width: 2rem; }
-.h-8 { height: 2rem; }
-.w-10 { width: 2.5rem; }
-.h-10 { height: 2.5rem; }
-.w-12 { width: 3rem; }
-.h-12 { height: 3rem; }
-.w-14 { width: 3.5rem; }
-.h-14 { height: 3.5rem; }
-.w-16 { width: 4rem; }
-.h-16 { height: 4rem; }
-.w-20 { width: 5rem; }
-.h-20 { height: 5rem; }
-.w-24 { width: 6rem; }
-.h-24 { height: 6rem; }
-.w-64 { width: 16rem; }
-.h-64 { height: 16rem; }
-.w-96 { width: 24rem; }
-.h-96 { height: 24rem; }
-
-/* Negative Margins for Decorative Circles */
-.-mr-32 { margin-right: -8rem; }
-.-mt-32 { margin-top: -8rem; }
-.-ml-24 { margin-left: -6rem; }
-.-mb-24 { margin-bottom: -6rem; }
-.-mr-48 { margin-right: -12rem; }
-.-mt-48 { margin-top: -12rem; }
-
-/* Typography */
-.text-center { text-align: center; }
-.font-bold { font-weight: 700; }
-.font-semibold { font-weight: 600; }
-.font-medium { font-weight: 500; }
-.italic { font-style: italic; }
-.uppercase { text-transform: uppercase; }
-.leading-relaxed { line-height: 1.625; }
-.whitespace-nowrap { white-space: nowrap; }
-.whitespace-pre-line { white-space: pre-line; }
-
-/* Font Sizes */
-.text-\[10px\] { font-size: 10px; }
-.text-xs { font-size: 0.75rem; line-height: 1rem; }
-.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-.text-base { font-size: 1rem; line-height: 1.5rem; }
-.text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-.text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-.text-2xl { font-size: 1.5rem; line-height: 2rem; }
-.text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
-.text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
-.text-5xl { font-size: 3rem; line-height: 1; }
-
-/* Colors & Backgrounds */
-.text-white { color: #ffffff; }
-.text-gray-900 { color: #111827; }
-.text-gray-800 { color: #1f2937; }
-.text-blue-600 { color: #2563eb; }
-.text-indigo-600 { color: #4f46e5; }
-.text-purple-600 { color: #9333ea; }
-.text-green-600 { color: #16a34a; }
-.text-red-900 { color: #7f1d1d; }
-
-.bg-white { background-color: #ffffff; }
-.bg-gray-100 { background-color: #f3f4f6; }
-.bg-gray-200 { background-color: #e5e7eb; }
-.bg-blue-50 { background-color: #eff6ff; }
-.bg-indigo-50 { background-color: #eef2ff; }
-.bg-purple-50 { background-color: #faf5ff; }
-.bg-red-50 { background-color: #fef2f2; }
-.bg-green-100 { background-color: #dcfce7; }
-.bg-blue-600 { background-color: #2563eb; }
-
-/* Gradients */
-.bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
-.bg-gradient-to-br { background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)); }
-.from-blue-50 { --tw-gradient-from: #eff6ff; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(239, 246, 255, 0)); }
-.via-indigo-50 { --tw-gradient-stops: var(--tw-gradient-from), #eef2ff, var(--tw-gradient-to, rgba(238, 242, 255, 0)); }
-.to-purple-50 { --tw-gradient-to: #faf5ff; }
-.from-blue-600 { --tw-gradient-from: #2563eb; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(37, 99, 235, 0)); }
-.via-indigo-600 { --tw-gradient-stops: var(--tw-gradient-from), #4f46e5, var(--tw-gradient-to, rgba(79, 70, 229, 0)); }
-.to-purple-600 { --tw-gradient-to: #9333ea; }
-.to-indigo-600 { --tw-gradient-to: #4f46e5; }
-.from-gray-100 { --tw-gradient-from: #f3f4f6; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(243, 244, 246, 0)); }
-.to-gray-200 { --tw-gradient-to: #e5e7eb; }
-.from-white { --tw-gradient-from: #ffffff; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0)); }
-.to-blue-50 { --tw-gradient-to: #eff6ff; }
-
-/* Borders & Rounded */
-.border { border-width: 1px; }
-.border-2 { border-width: 2px; }
-.border-3 { border-width: 3px; }
-.border-l-4 { border-left-width: 4px; }
-.border-t-2 { border-top-width: 2px; }
-.border-t-transparent { border-top-color: transparent; }
-.border-gray-300 { border-color: #d1d5db; }
-.border-gray-400 { border-color: #9ca3af; }
-.border-blue-200 { border-color: #bfdbfe; }
-.border-indigo-200 { border-color: #c7d2fe; }
-.border-purple-200 { border-color: #e9d5ff; }
-.border-blue-600 { border-color: #2563eb; }
-.border-red-600 { border-color: #dc2626; }
-.border-white { border-color: #ffffff; }
-
-.rounded-lg { border-radius: 0.5rem; }
-.rounded-xl { border-radius: 0.75rem; }
-.rounded-2xl { border-radius: 1rem; }
-.rounded-3xl { border-radius: 1.5rem; }
-.rounded-full { border-radius: 9999px; }
-
-/* Effects */
-.shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
-.shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-.shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-.shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
-.opacity-10 { opacity: 0.1; }
-.opacity-50 { opacity: 0.5; }
-
-/* Transitions & Animation */
-.transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
-.duration-200 { transition-duration: 200ms; }
-.duration-300 { transition-duration: 300ms; }
-.duration-500 { transition-duration: 500ms; }
-.ease-out { transition-timing-function: cubic-bezier(0, 0, 0.2, 1); }
-.transform { transform: translateX(0) translateY(0) rotate(0) skewX(0) skewY(0) scaleX(1) scaleY(1); }
-.scale-105 { transform: scale(1.05); }
-.scale-110 { transform: scale(1.1); }
-.animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-.animate-spin { animation: spin 1s linear infinite; }
-
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-/* --- COMPONENT STYLES --- */
-
-/* Inputs - General */
-input, select, textarea {
-  appearance: none;
-  -webkit-appearance: none;
-  outline: none;
-  font-family: inherit;
-  font-size: 16px; /* MOBILE FIX: Prevents iOS zoom on focus */
-}
-
-/* Custom Checkbox and Radio Styles */
-input[type="radio"],
-input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  background-color: #fff;
-  border-width: 1px;
-  border-style: solid; 
-  border-color: #d1d5db; /* gray-300 */
-  display: inline-block;
-  vertical-align: middle;
-  background-origin: border-box;
-  flex-shrink: 0; 
-  color: #2563eb; /* blue-600 */
-  
-  width: 1.25rem; 
-  height: 1.25rem;
-  min-width: 1.25rem;
-  min-height: 1.25rem;
-}
-
-/* Radio Button Circle */
-input[type="radio"] {
-  border-radius: 50%;
-}
-
-/* Checkbox Rounded Square */
-input[type="checkbox"] {
-  border-radius: 0.25rem;
-}
-
-/* Checked State - Radio */
-input[type="radio"]:checked {
-  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
-  border-color: transparent;
-  background-color: currentColor;
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-/* Checked State - Checkbox */
-input[type="checkbox"]:checked {
-  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
-  border-color: transparent;
-  background-color: currentColor;
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-/* Focus States for Inputs */
-input[type="radio"]:focus,
-input[type="checkbox"]:focus {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2563eb;
-}
-
-/* Specific Focus/Hover States from App.js */
-.hover\:from-blue-700:hover { --tw-gradient-from: #1d4ed8; }
-.hover\:to-indigo-700:hover { --tw-gradient-to: #4338ca; }
-.hover\:bg-gray-50:hover { background-color: #f9fafb; }
-.hover\:border-gray-500:hover { border-color: #6b7280; }
-.hover\:border-blue-400:hover { border-color: #60a5fa; }
-.hover\:border-blue-500:hover { border-color: #3b82f6; }
-.hover\:bg-blue-50:hover { background-color: #eff6ff; }
-.hover\:shadow-lg:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-.hover\:shadow-2xl:hover { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
-.hover\:scale-105:hover { transform: scale(1.05); }
-
-.group:hover .group-hover\:border-blue-500 { border-color: #3b82f6; }
-.group:hover .group-hover\:scale-105 { transform: scale(1.05); }
-.group:hover .group-hover\:shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-
-.focus\:ring-2:focus { box-shadow: 0 0 0 2px #3b82f6; } /* Simplified ring */
-.focus\:border-blue-500:focus { border-color: #3b82f6; }
-
-.disabled\:opacity-50:disabled { opacity: 0.5; }
-.disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
-
-/* --- RESPONSIVE MEDIA QUERIES (The Fix for Mobile) --- */
-@media (min-width: 768px) {
-  /* Layout */
-  .md\:flex-row { flex-direction: row; }
-  .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .md\:gap-0 { gap: 0; }
-  .md\:gap-6 { gap: 1.5rem; }
-  
-  /* Sizing */
-  .md\:w-auto { width: auto; }
-  .md\:w-6 { width: 1.5rem; }
-  .md\:h-6 { height: 1.5rem; }
-  .md\:w-10 { width: 2.5rem; }
-  .md\:h-10 { height: 2.5rem; }
-  .md\:w-14 { width: 3.5rem; }
-  .md\:h-14 { height: 3.5rem; }
-  .md\:w-16 { width: 4rem; }
-  .md\:h-16 { height: 4rem; }
-  .md\:w-24 { width: 6rem; }
-  .md\:h-24 { height: 6rem; }
-
-  /* Spacing */
-  .md\:p-6 { padding: 1.5rem; }
-  .md\:p-8 { padding: 2rem; }
-  .md\:p-10 { padding: 2.5rem; }
-  .md\:p-12 { padding: 3rem; }
-  .md\:px-4 { padding-left: 1rem; padding-right: 1rem; }
-  .md\:px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-  .md\:px-8 { padding-left: 2rem; padding-right: 2rem; }
-  .md\:px-10 { padding-left: 2.5rem; padding-right: 2.5rem; }
-  .md\:px-12 { padding-left: 3rem; padding-right: 3rem; }
-  .md\:py-4 { padding-top: 1rem; padding-bottom: 1rem; }
-  .md\:py-5 { padding-top: 1.25rem; padding-bottom: 1.25rem; }
-  .md\:py-8 { padding-top: 2rem; padding-bottom: 2rem; }
-  .md\:py-12 { padding-top: 3rem; padding-bottom: 3rem; }
-  .md\:mb-6 { margin-bottom: 1.5rem; }
-  .md\:mb-10 { margin-bottom: 2.5rem; }
-
-  /* Typography */
-  .md\:text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-  .md\:text-base { font-size: 1rem; line-height: 1.5rem; }
-  .md\:text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-  .md\:text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-  .md\:text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
-  .md\:text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
-  .md\:text-5xl { font-size: 3rem; line-height: 1; }
-
-  /* Other */
-  .md\:ring-4 { box-shadow: 0 0 0 4px #bfdbfe; }
-  .md\:border-3 { border-width: 3px; }
-  .md\:scale-125 { transform: scale(1.25); }
-  .group:hover .md\:group-hover\:scale-110 { transform: scale(1.1); }
-}
+export default App;
