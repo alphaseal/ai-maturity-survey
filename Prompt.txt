@@ -1,0 +1,28 @@
+Prompt:
+
+"Infographic slide design for a private equity executive summary. The style is sophisticated, futuristic, corporate, and data-driven with a dark blue and gold color palette. On the far left, there is a glowing, stylized archway portal labeled 'The Front Door: AI Maturity Study'. Streams of binary code and data points are flowing into this portal. Erupting from the right side of the portal are four distinct, upward-curving pathways or pillars, expanding as they move right. Each pathway has an icon and a text container. The overall impression is speed, clarity, and technological advancement unlocking financial value."
+
+The Text Content (To overlay on the visual)
+Once you have the visual structure, here is the exact text to place into the corresponding sections of the one-pager.
+
+[Main Title across the top] Driving Private Equity Value through Active AI Strategy
+
+[Subtitle below title] Leveraging our proprietary AI Maturity Study as the gateway to actionable insights and proactive value creation.
+
+[Section 1: The "Front Door" Portal (Left Side)]
+Title: The Front Door: AI Maturity Study Body:
+
+Assesses portfolio or target readiness.
+
+Generates foundational data insights.
+
+The single entry point for strategic engagement.
+
+[Section 2: The Four Value Pathways (Flowing Right)]
+(Pathway 1: Top) Icon: A radar dish or a magnifying glass over a globe. Title: Proactive Deal Sourcing Body: Shifting from defensive posturing to active, AI-driven identification of off-market targets and emerging opportunities.
+
+(Pathway 2: Upper Middle) Icon: A clipboard with a checkmark and a stopwatch. Title: Commercial Due Diligence Accelerated Body: Rapid, rigorous analysis of market dynamics and target data to uncover hidden risks and validate upside potential faster.
+
+(Pathway 3: Lower Middle) Icon: Two gears interlocking or an upward trending arrow chart. Title: Post-Merger & Operational Improvement Body: Leveraging AI to streamline integration friction and drive immediate productivity gains across key operations.
+
+(Pathway 4: Bottom) Icon: A microchip embedded in a dollar sign or a brain icon. Title: Long-Term Performance via AI Integration Body: Identifying and embedding bespoke AI solutions within portfolio companies to build sustainable competitive advantage.

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronRight, CheckCircle, Coffee, Sparkles, TrendingUp, Users, Target } from 'lucide-react';
+import { ChevronRight, CheckCircle, Coffee, Sparkles, TrendingUp, Users, Target, BarChart3, ShieldCheck, BrainCircuit } from 'lucide-react';
 
 const AISurvey = () => {
   const [started, setStarted] = useState(false);
@@ -42,7 +42,14 @@ const AISurvey = () => {
           id: 'department',
           text: '2. Which department best describes your primary function?',
           type: 'select',
-          options: ['Sales', 'Marketing', 'Customer Services', 'Strategy', 'Engineering / IT', 'HR', 'Finance', 'Operations', 'Legal', 'Other']
+          options: ['CEO / COO / CFO', 'Sales', 'Marketing', 'Customer Services', 'Strategy', 'Engineering / IT', 'HR', 'Finance', 'Operations', 'Legal', 'Other']
+        },
+        {
+          id: 'departmentOther',
+          text: 'If Other, please specify:',
+          type: 'text',
+          dependsOn: 'department',
+          dependsValue: 'Other'
         },
         {
           id: 'roleLevel',
@@ -84,11 +91,53 @@ const AISurvey = () => {
       ]
     },
     {
+      title: "Strategy, Data & Operating Model",
+      questions: [
+        {
+          id: 'aiStrategy',
+          text: '7. How would you describe your organization\'s current AI Strategy?',
+          type: 'radio',
+          options: [
+            { value: 'none', label: 'Experimenting without a formal plan' },
+            { value: 'developing', label: 'Roadmap is being defined' },
+            { value: 'defined', label: 'Strategy and budget are in place' },
+            { value: 'scaling', label: 'Strategy is embedded in operations' }
+          ]
+        },
+        {
+          id: 'operatingModel',
+          text: '8. Which "Operating Model" best describes how AI initiatives are managed?',
+          type: 'radio',
+          options: [
+            { value: 'decentralized', label: 'Managed independently by teams/departments' },
+            { value: 'centralized', label: 'Managed by a dedicated central team' },
+            { value: 'federated', label: 'Central guidance with team-based execution' }
+          ]
+        },
+        {
+          id: 'dataMaturity',
+          text: '9. How would you rate your organization\'s "Data Maturity" regarding AI readiness?',
+          type: 'radio',
+          options: [
+            { value: 'siloed', label: 'Data is siloed or requires manual work' },
+            { value: 'managed', label: 'Data stored centrally but access can be slow' },
+            { value: 'integrated', label: 'Data is governed and easy to access' },
+            { value: 'strategic', label: 'Real-time data drives automated decisions' }
+          ]
+        },
+        {
+          id: 'dataGovernance',
+          text: '10. "Our organization has strong data governance, ensuring data quality, privacy, and clear ownership."',
+          type: 'likert'
+        }
+      ]
+    },
+    {
       title: "Usage, Tools & Proficiency",
       questions: [
         {
           id: 'frequency',
-          text: '7. How frequently do you currently use Generative AI tools (like ChatGPT, Claude, Copilot) to assist with work tasks?',
+          text: '11. How frequently do you currently use Generative AI tools (like ChatGPT, Claude, Copilot) to assist with work tasks?',
           type: 'radio',
           options: [
             { value: 'daily-multiple', label: 'Daily - Multiple times a day' },
@@ -100,7 +149,7 @@ const AISurvey = () => {
         },
         {
           id: 'training',
-          text: '8. What level of formal AI training have you received from the organization?',
+          text: '12. What level of formal AI training have you received from the organization?',
           type: 'radio',
           options: [
             { value: 'none', label: 'None - I am completely self-taught' },
@@ -110,8 +159,13 @@ const AISurvey = () => {
           ]
         },
         {
+          id: 'talentReadiness',
+          text: '13. "Our organization actively recruits AI talent and/or provides sufficient upskilling opportunities for existing staff."',
+          type: 'likert'
+        },
+        {
           id: 'tools',
-          text: '9. Which of the following AI tools have you used for work purposes in the last 30 days? (Select all that apply)',
+          text: '14. Which of the following AI tools have you used for work purposes in the last 30 days? (Select all that apply)',
           type: 'checkbox',
           options: [
             'OpenAI (ChatGPT)',
@@ -133,13 +187,12 @@ const AISurvey = () => {
           id: 'toolsOther',
           text: 'If Other, please specify:',
           type: 'text',
-          conditional: true,
           dependsOn: 'tools',
           dependsValue: 'Other'
         },
         {
           id: 'proficiency',
-          text: '10. How would you rate your own proficiency in using AI tools effectively?',
+          text: '15. How would you rate your own proficiency in using AI tools effectively?',
           type: 'radio',
           options: [
             { value: '1', label: '1 - Novice (I am just starting to explore)' },
@@ -150,7 +203,7 @@ const AISurvey = () => {
         },
         {
           id: 'personalUse',
-          text: '11. To get your job done efficiently, are there AI tools you sometimes use on personal devices or accounts because the company doesn\'t currently provide access to them?',
+          text: '16. To get your job done efficiently, are there AI tools you sometimes use on personal devices or accounts because the company doesn\'t currently provide access to them?',
           type: 'radio',
           options: [
             { value: 'frequently', label: 'Yes, frequently' },
@@ -165,7 +218,7 @@ const AISurvey = () => {
       questions: [
         {
           id: 'integration',
-          text: '12. How integrated is AI into your current workflow?',
+          text: '17. How integrated is AI into your current workflow?',
           type: 'radio',
           options: [
             { value: 'none', label: 'Not integrated (I don\'t use it)' },
@@ -176,7 +229,7 @@ const AISurvey = () => {
         },
         {
           id: 'barriers',
-          text: '13. What are the BIGGEST barriers preventing you from using AI more effectively at work? (Select up to three)',
+          text: '18. What are the BIGGEST barriers preventing you from using AI more effectively at work? (Select up to three)',
           type: 'checkbox',
           maxSelections: 3,
           options: [
@@ -191,7 +244,7 @@ const AISurvey = () => {
         },
         {
           id: 'collaboration',
-          text: '14. Do you share AI prompts, custom instructions, or "bots" with your colleagues?',
+          text: '19. Do you share AI prompts, custom instructions, or "bots" with your colleagues?',
           type: 'radio',
           options: [
             { value: 'never', label: 'No, I work in isolation' },
@@ -201,7 +254,7 @@ const AISurvey = () => {
         },
         {
           id: 'value',
-          text: '15. Based on your experience, where does AI currently add the most value to your work? (Select up to three)',
+          text: '20. Based on your experience, where does AI currently add the most value to your work? (Select up to three)',
           type: 'checkbox',
           maxSelections: 3,
           options: [
@@ -214,8 +267,24 @@ const AISurvey = () => {
           ]
         },
         {
+          id: 'futureValue',
+          text: '21. Where in the business do you see the greatest need to adopt AI for future value creation? (Select up to three)',
+          type: 'checkbox',
+          maxSelections: 3,
+          options: [
+            'Customer Service & Support',
+            'Sales & Marketing Optimization',
+            'Product Development & Innovation',
+            'Operations & Supply Chain Efficiency',
+            'Finance & Administration (Automation)',
+            'Human Resources & Talent Management',
+            'Legal, Risk & Compliance',
+            'Strategy & Decision Making'
+          ]
+        },
+        {
           id: 'taskWish',
-          text: '16. Describe one manual, repetitive, or time-consuming task you perform regularly that you wish an AI tool could handle or simplify for you.',
+          text: '22. Describe one manual, repetitive, or time-consuming task you perform regularly that you wish an AI tool could handle or simplify for you.',
           type: 'textarea'
         }
       ]
@@ -226,22 +295,22 @@ const AISurvey = () => {
       questions: [
         {
           id: 'visionClarity',
-          text: '17. "I clearly understand the organization\'s vision and strategy for adopting Artificial Intelligence."',
+          text: '23. "I clearly understand the organization\'s vision and strategy for adopting Artificial Intelligence."',
           type: 'likert'
         },
         {
           id: 'leadershipUnderstanding',
-          text: '18. "I feel leadership understands the practical realities and challenges of using AI in my specific job role."',
+          text: '24. "I feel leadership understands the practical realities and challenges of using AI in my specific job role."',
           type: 'likert'
         },
         {
           id: 'resources',
-          text: '19. "I feel I have the necessary time and resources (training, budget) to learn and adopt new AI tools."',
+          text: '25. "I feel I have the necessary time and resources (training, budget) to learn and adopt new AI tools."',
           type: 'likert'
         },
         {
           id: 'culture',
-          text: '20. "The culture in my department is generally open to adopting new technologies and changing how we work."',
+          text: '26. "The culture in my department is generally open to adopting new technologies and changing how we work."',
           type: 'likert'
         }
       ]
@@ -251,7 +320,7 @@ const AISurvey = () => {
       questions: [
         {
           id: 'policyAwareness',
-          text: '21. Are you aware of an official organization-wide "AI Acceptable Use Policy" or set of guidelines?',
+          text: '27. Are you aware of an official organization-wide "AI Acceptable Use Policy" or set of guidelines?',
           type: 'radio',
           options: [
             { value: 'read', label: 'Yes, I have read it.' },
@@ -261,8 +330,13 @@ const AISurvey = () => {
           ]
         },
         {
+          id: 'riskManagement',
+          text: '28. "Our organization has a defined framework for assessing and mitigating AI-related risks (e.g., bias, security, legal)."',
+          type: 'likert'
+        },
+        {
           id: 'dataConfidence',
-          text: '22. How confident are you that you know what types of company data are safe to share with public AI models (like ChatGPT) versus what must be kept private?',
+          text: '29. How confident are you that you know what types of company data are safe to share with public AI models (like ChatGPT) versus what must be kept private?',
           type: 'radio',
           options: [
             { value: '1', label: '1 - Not confident at all (I am confused about what is allowed)' },
@@ -274,7 +348,7 @@ const AISurvey = () => {
         },
         {
           id: 'ethicalSupport',
-          text: '23. "When I use AI, I feel supported by the organization to make ethical decisions about how its output is used (e.g., checking for bias, ensuring accuracy)."',
+          text: '30. "When I use AI, I feel supported by the organization to make ethical decisions about how its output is used (e.g., checking for bias, ensuring accuracy)."',
           type: 'likert'
         }
       ]
@@ -319,7 +393,9 @@ const AISurvey = () => {
     });
 
     if (unansweredQuestions.length > 0) {
-      setValidationError('Please answer all questions before proceeding to the next section.');
+      // UPDATED: Create a list of missing questions with proper line breaks
+      const missingList = unansweredQuestions.map(q => `• ${q.text}`).join('\n');
+      setValidationError(`Please answer the following questions before proceeding:\n${missingList}`);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return false;
     }
@@ -385,8 +461,8 @@ const AISurvey = () => {
     if (question.conditional && !isLeadership) return null;
     if (question.dependsOn && !responses[question.dependsOn]?.includes(question.dependsValue)) return null;
 
-    // UPDATED: Added outline-none and verified border classes to ensure consistent "bracket" look
-    const commonClasses = "w-full p-4 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:border-blue-400 outline-none";
+    // UPDATED: Added text-base to prevent iOS zoom
+    const commonClasses = "w-full p-3 md:p-4 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white shadow-sm hover:border-blue-400 outline-none text-base";
 
     switch (question.type) {
       case 'select':
@@ -470,14 +546,16 @@ const AISurvey = () => {
 
       case 'likert':
         return (
-          <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-8 rounded-2xl border-2 border-gray-300 shadow-md">
-            <div className="flex justify-between items-center mb-6">
+          // UPDATED: Added responsive padding and gap
+          <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-3 md:p-8 rounded-2xl border-2 border-gray-300 shadow-md">
+            <div className="flex justify-between items-center mb-6 gap-2">
               {[1, 2, 3, 4, 5].map(num => (
-                <label key={num} className="flex flex-col items-center space-y-3 cursor-pointer group">
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 shadow-md ${
+                <label key={num} className="flex flex-col items-center space-y-3 cursor-pointer group flex-1">
+                  {/* UPDATED: Responsive sizing for circles (w-10/h-10 on mobile, w-16/h-16 on desktop) */}
+                  <div className={`w-10 h-10 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all duration-300 shadow-md ${
                     responses[question.id] === num.toString() 
-                      ? 'bg-blue-600 text-white shadow-xl scale-125 ring-4 ring-blue-200' 
-                      : 'bg-white border-3 border-gray-400 text-gray-900 group-hover:border-blue-500 group-hover:scale-110 group-hover:shadow-lg'
+                      ? 'bg-blue-600 text-white shadow-xl scale-110 md:scale-125 ring-2 md:ring-4 ring-blue-200' 
+                      : 'bg-white border-2 md:border-3 border-gray-400 text-gray-900 group-hover:border-blue-500 group-hover:scale-105 md:group-hover:scale-110 group-hover:shadow-lg'
                   }`}>
                     <input
                       type="radio"
@@ -487,12 +565,13 @@ const AISurvey = () => {
                       onChange={(e) => handleResponse(question.id, e.target.value)}
                       className="sr-only"
                     />
-                    <span className="text-xl font-bold">{num}</span>
+                    {/* UPDATED: Responsive font size */}
+                    <span className="text-base md:text-xl font-bold">{num}</span>
                   </div>
                 </label>
               ))}
             </div>
-            <div className="flex justify-between text-sm font-semibold text-gray-900 px-4">
+            <div className="flex justify-between text-[10px] sm:text-xs md:text-sm font-semibold text-gray-900 px-1 md:px-4">
               <span>Strongly Disagree</span>
               <span>Neutral</span>
               <span>Strongly Agree</span>
@@ -512,47 +591,48 @@ const AISurvey = () => {
         <div className="max-w-4xl w-full">
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
             {/* Hero Header */}
-            <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-12 text-center relative overflow-hidden">
+            {/* UPDATED: Responsive padding and text */}
+            <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-6 md:p-12 text-center relative overflow-hidden">
               <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-10 rounded-full -mr-48 -mt-48"></div>
               <div className="absolute bottom-0 left-0 w-64 h-64 bg-white opacity-10 rounded-full -ml-32 -mb-32"></div>
               <div className="relative z-10">
-                <Sparkles className="w-16 h-16 mx-auto mb-6" />
-                <h1 className="text-5xl font-bold mb-4">
+                <Sparkles className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 md:mb-6" />
+                <h1 className="text-3xl md:text-5xl font-bold mb-4">
                   Organisational AI Maturity Assessment Survey
                 </h1>
-                <div className="flex items-center justify-center space-x-2 text-xl">
-                  <Coffee className="w-6 h-6" />
+                <div className="flex items-center justify-center space-x-2 text-lg md:text-xl">
+                  <Coffee className="w-5 h-5 md:w-6 md:h-6" />
                   <p>It will only take a coffee's time to complete</p>
                 </div>
               </div>
             </div>
 
             {/* Introduction Content */}
-            <div className="p-12">
-              <div className="mb-10">
-                <h2 className="text-3xl font-bold text-gray-900 mb-6">Welcome!</h2>
-                <p className="text-lg text-gray-900 leading-relaxed mb-6">
+            <div className="p-6 md:p-12">
+              <div className="mb-8 md:mb-10">
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-6">Welcome!</h2>
+                <p className="text-base md:text-lg text-gray-900 leading-relaxed mb-4 md:mb-6">
                   Thank you for participating in our AI Maturity Assessment. This survey is designed to help us understand your organisation's current AI adoption journey, identify opportunities for growth, and develop strategies to maximize AI's potential within your team.
                 </p>
-                <p className="text-lg text-gray-900 leading-relaxed">
+                <p className="text-base md:text-lg text-gray-900 leading-relaxed">
                   Your honest feedback will help shape our AI transformation roadmap and ensure we're providing the right tools, training, and support for everyone.
                 </p>
               </div>
 
               {/* Key Points */}
-              <div className="grid md:grid-cols-3 gap-6 mb-10">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10">
                 <div className="bg-blue-50 p-6 rounded-xl border-2 border-blue-200 shadow-sm">
-                  <TrendingUp className="w-10 h-10 text-blue-600 mb-3" />
-                  <h3 className="font-bold text-gray-900 mb-2">5 Sections</h3>
-                  <p className="text-sm text-gray-800">Covering profile, tools, workflow, leadership, and governance</p>
+                  <TrendingUp className="w-8 h-8 md:w-10 md:h-10 text-blue-600 mb-3" />
+                  <h3 className="font-bold text-gray-900 mb-2">6 Sections</h3>
+                  <p className="text-sm text-gray-800">Covering strategy, tools, workflow, and governance</p>
                 </div>
                 <div className="bg-indigo-50 p-6 rounded-xl border-2 border-indigo-200 shadow-sm">
-                  <Users className="w-10 h-10 text-indigo-600 mb-3" />
-                  <h3 className="font-bold text-gray-900 mb-2">23 Questions</h3>
-                  <p className="text-sm text-gray-800">Quick and easy to complete, approximately 5-7 minutes</p>
+                  <Users className="w-8 h-8 md:w-10 md:h-10 text-indigo-600 mb-3" />
+                  <h3 className="font-bold text-gray-900 mb-2">30 Questions</h3>
+                  <p className="text-sm text-gray-800">Quick and easy to complete, approximately 7-10 minutes</p>
                 </div>
                 <div className="bg-purple-50 p-6 rounded-xl border-2 border-purple-200 shadow-sm">
-                  <Target className="w-10 h-10 text-purple-600 mb-3" />
+                  <Target className="w-8 h-8 md:w-10 md:h-10 text-purple-600 mb-3" />
                   <h3 className="font-bold text-gray-900 mb-2">Confidential</h3>
                   <p className="text-sm text-gray-800">Your responses help us improve our AI strategy</p>
                 </div>
@@ -561,7 +641,7 @@ const AISurvey = () => {
               {/* Start Button */}
               <button
                 onClick={handleStart}
-                className="w-full flex items-center justify-center space-x-3 px-10 py-5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-bold text-xl shadow-xl hover:shadow-2xl transform hover:scale-105"
+                className="w-full flex items-center justify-center space-x-3 px-6 py-4 md:px-10 md:py-5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-bold text-lg md:text-xl shadow-xl hover:shadow-2xl transform hover:scale-105"
               >
                 <span>Start Survey</span>
                 <ChevronRight className="w-6 h-6" />
@@ -576,19 +656,19 @@ const AISurvey = () => {
   if (submitted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl shadow-2xl p-12 max-w-md text-center">
-          <div className="bg-green-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-            <CheckCircle className="w-14 h-14 text-green-600" />
+        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 max-w-md text-center">
+          <div className="bg-green-100 w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <CheckCircle className="w-12 h-12 md:w-14 md:h-14 text-green-600" />
           </div>
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Thank You!</h2>
-          <p className="text-lg text-gray-900 mb-8">Your responses have been submitted successfully.</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Thank You!</h2>
+          <p className="text-base md:text-lg text-gray-900 mb-8">Your responses have been submitted successfully.</p>
           <div className="flex items-center justify-center space-x-2 text-blue-600 mb-8">
-            <Sparkles className="w-6 h-6" />
-            <span className="font-semibold text-lg">We appreciate your time and insights</span>
+            <Sparkles className="w-5 h-5 md:w-6 md:h-6" />
+            <span className="font-semibold text-base md:text-lg">We appreciate your time and insights</span>
           </div>
           <button
             onClick={resetSurvey}
-            className="px-8 py-4 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl"
+            className="w-full md:w-auto px-8 py-4 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl"
           >
             Start New Survey
           </button>
@@ -601,17 +681,17 @@ const AISurvey = () => {
   const progress = ((currentSection + 1) / sections.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-4 px-3 md:py-12 md:px-4">
       <div className="max-w-5xl mx-auto">
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-10 relative overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-6 md:p-10 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full -ml-24 -mb-24"></div>
             <div className="relative z-10">
               <div className="flex items-center space-x-3 mb-3">
-                <Sparkles className="w-10 h-10" />
-                <h1 className="text-4xl font-bold">Organisational AI Maturity Assessment Survey</h1>
+                <Sparkles className="w-8 h-8 md:w-10 md:h-10" />
+                <h1 className="text-2xl md:text-4xl font-bold">Organisational AI Maturity Assessment Survey</h1>
               </div>
             </div>
           </div>
@@ -627,10 +707,10 @@ const AISurvey = () => {
           </div>
 
           {/* Content */}
-          <div className="p-12">
+          <div className="p-4 md:p-12">
             {/* Validation Error Message */}
             {validationError && (
-              <div className="mb-6 bg-red-50 border-l-4 border-red-600 p-6 rounded-xl shadow-lg animate-pulse">
+              <div className="mb-6 bg-red-50 border-l-4 border-red-600 p-4 md:p-6 rounded-xl shadow-lg animate-pulse">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
                     <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -638,34 +718,34 @@ const AISurvey = () => {
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <p className="text-lg font-bold text-red-900">{validationError}</p>
+                    <p className="text-base md:text-lg font-bold text-red-900 whitespace-pre-line">{validationError}</p>
                   </div>
                 </div>
               </div>
             )}
 
-            <div className="mb-10">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-4xl font-bold text-gray-900">
+            <div className="mb-8 md:mb-10">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-6 gap-4">
+                <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
                   {currentSectionData.title}
                 </h2>
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-full text-sm font-bold shadow-lg">
+                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 md:px-6 md:py-3 rounded-full text-xs md:text-sm font-bold shadow-lg whitespace-nowrap">
                   Section {currentSection + 1} of {sections.length}
                 </div>
               </div>
               {currentSectionData.subtitle && (
-                <p className="text-gray-900 italic text-xl bg-blue-50 p-6 rounded-xl border-l-4 border-blue-600 shadow-sm font-medium">{currentSectionData.subtitle}</p>
+                <p className="text-gray-900 italic text-base md:text-xl bg-blue-50 p-4 md:p-6 rounded-xl border-l-4 border-blue-600 shadow-sm font-medium">{currentSectionData.subtitle}</p>
               )}
             </div>
 
-            <div className="space-y-8">
+            <div className="space-y-6 md:space-y-8">
               {currentSectionData.questions.map((question) => {
                 if (question.conditional && !isLeadership) return null;
                 if (question.dependsOn && !responses[question.dependsOn]?.includes(question.dependsValue)) return null;
 
                 return (
-                  <div key={question.id} className="bg-gradient-to-br from-white to-blue-50 p-8 rounded-2xl border-2 border-gray-300 shadow-lg hover:shadow-xl transition-shadow duration-200">
-                    <label className="block text-gray-900 font-bold mb-6 text-xl">
+                  <div key={question.id} className="bg-gradient-to-br from-white to-blue-50 p-4 md:p-8 rounded-2xl border-2 border-gray-300 shadow-lg hover:shadow-xl transition-shadow duration-200">
+                    <label className="block text-gray-900 font-bold mb-4 md:mb-6 text-lg md:text-xl">
                       {question.text}
                     </label>
                     {renderQuestion(question)}
@@ -676,11 +756,11 @@ const AISurvey = () => {
           </div>
 
           {/* Navigation */}
-          <div className="bg-gradient-to-r from-gray-100 to-gray-200 px-12 py-8 flex justify-between items-center border-t-2 border-gray-300">
+          <div className="bg-gradient-to-r from-gray-100 to-gray-200 px-6 py-6 md:px-12 md:py-8 flex flex-col-reverse md:flex-row justify-between items-center border-t-2 border-gray-300 gap-4 md:gap-0">
             <button
               onClick={handlePrevious}
               disabled={currentSection === 0}
-              className="flex items-center space-x-2 px-8 py-4 rounded-xl bg-white border-2 border-gray-400 text-gray-900 hover:bg-gray-50 hover:border-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-bold shadow-md hover:shadow-lg"
+              className="w-full md:w-auto flex justify-center items-center space-x-2 px-6 py-3 md:px-8 md:py-4 rounded-xl bg-white border-2 border-gray-400 text-gray-900 hover:bg-gray-50 hover:border-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-bold shadow-md hover:shadow-lg"
             >
               <span>← Previous</span>
             </button>
@@ -688,7 +768,7 @@ const AISurvey = () => {
             {currentSection < sections.length - 1 ? (
               <button
                 onClick={handleNext}
-                className="flex items-center space-x-2 px-10 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-bold shadow-xl hover:shadow-2xl transform hover:scale-105"
+                className="w-full md:w-auto flex justify-center items-center space-x-2 px-6 py-3 md:px-10 md:py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-bold shadow-xl hover:shadow-2xl transform hover:scale-105"
               >
                 <span>Next Section</span>
                 <ChevronRight className="w-6 h-6" />
@@ -697,7 +777,7 @@ const AISurvey = () => {
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="flex items-center space-x-2 px-10 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-bold shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full md:w-auto flex justify-center items-center space-x-2 px-6 py-3 md:px-10 md:py-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-bold shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {submitting ? (
                   <>
