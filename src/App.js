@@ -323,19 +323,21 @@ const AISurvey = () => {
       
       console.log('Data sent to Google Sheets');
       
+      // Reduced delay from 1500ms to 500ms for faster feel
       setTimeout(() => {
         setSubmitted(true);
         setSubmitting(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 1500);
+      }, 500);
       
     } catch (err) {
       console.error('Submission error:', err);
+      // Reduced delay from 1500ms to 500ms
       setTimeout(() => {
         setSubmitted(true);
         setSubmitting(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 1500);
+      }, 500);
     }
   };
 
